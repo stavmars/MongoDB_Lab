@@ -148,7 +148,7 @@ db.books.find({categories: {$in: ["Python", "PHP"]}}, {
 ```
 
 
-❔ Find the top 5 Python books with the most pages and print their titles, categories and page counts.
+Find the top 5 Python books with the most pages and print their titles, categories and page counts.
 
 ```
 
@@ -159,7 +159,7 @@ db.books.find({categories: {$in: ["Python", "PHP"]}}, {
 ```
 
 
-❔ Find the books that have as author either "Marc Harter" or "Alex Holmes" and print their titles, authors and categories
+Find the books that have as author either "Marc Harter" or "Alex Holmes" and print their titles, authors and categories
 
 ```
 
@@ -203,7 +203,7 @@ db.books.aggregate( [
    }
 ] )
 ```
-❔ Expand the example above in order to also compute the minimum and maximum number of pages
+Expand the example above in order to also compute the minimum and maximum number of pages
 ```
 
 
@@ -241,7 +241,7 @@ db.books.aggregate([
     }, {$sort: {count: -1}}])
 ```
 
-❔ Now expand the query above to find the number of books per year and status.
+Now expand the query above to find the number of books per year and status.
 <br />&nbsp;&nbsp;&nbsp;&nbsp;**Hint:** Use as the _id field in the **$group** stage an object with keys both the year and status: __id:{year:"$year", status:"$status"}_
 ```
 
@@ -264,7 +264,7 @@ db.books.aggregate([
 ])
 ```
 
-❔ Similarly, find the average number of pages, as well as the number of books per author. 
+Similarly, find the average number of pages, as well as the number of books per author. 
 Then, find the 5 authors with the most books. Remember that as with the categories field, the authors field is also an array, so use the **$unwind** aggregation stage.
 ```
 
@@ -287,7 +287,7 @@ db.books.aggregate([{$project: {authorsCount: {$size: '$authors'}}}, {
 }])
 ```
 
-❔ In the same fashion, find the average number of categories for every book.
+In the same fashion, find the average number of categories for every book.
 ```
 
 
@@ -308,7 +308,7 @@ db.books.aggregate([
 ])
 ```
 
-❔ Now, find all the years that there were publications for every category of book:
+Now, find all the years that there were publications for every category of book:
 ```
 
 
