@@ -1,4 +1,4 @@
-# MongoDB Lab - Hands-on
+# CDS110-2021 MongoDB Lab - Hands-on
 
 __Prerequisites:__
 You need to have Docker preinstalled. You can install it from [here](https://docs.docker.com/get-docker/).
