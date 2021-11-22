@@ -77,7 +77,7 @@ Update all matching documents:
 
 Remove all matching documents:
 ```
- db.items.remove({ qty: { $lte: 10 } })
+ db.items.deleteMany({ qty: { $lte: 10 } })
 ```
 
 
