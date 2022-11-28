@@ -190,6 +190,13 @@ db.books.createIndex({categories: 1})
 
 Now run the same query again and compare the execution stats and query plans followed.
 
+To drop the index we just created we can run:
+
+```
+db.books.dropIndex({categories: 1})
+```
+
+
 
 ## Aggregations
 
