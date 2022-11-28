@@ -18,10 +18,6 @@ The connect to our container named MONGO_CONTAINER using the bash terminal run:
 
 To launch the MongoDB shell and connect to the MongoDB instance running on localhost with the default port 27017:
  ```
-   mongo
- ```
- You can also use the new MongoDB Shell, mongosh that has better syntax highlighting:
- ```
    mongosh
  ```
 
@@ -104,6 +100,11 @@ wget -qO- https://raw.githubusercontent.com/stavmars/MongoDB_Lab/main/books.json
 
 
 ## Explore the Books Dataset
+
+Launch the MongoDB shell again:
+ ```
+   mongosh
+ ```
 
 Switch to the new database and view the available collections
 ```
