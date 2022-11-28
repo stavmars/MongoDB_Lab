@@ -88,8 +88,7 @@ Then, in the bash shell run the following to update the container libraries and 
 This is needed in order to later fetch the sample json file from the web.
 
 ```
-apt-get update
-apt-get install wget
+apt-get update && apt-get install wget
 ```
 
 Fetch the sample json and import it into a collection "books" of database "lab" using **mongoimport**:
@@ -316,7 +315,19 @@ db.books.aggregate([
 ])
 ```
 
-Now, find all the years that there were publications for every category of book:
+Now, find for every category of book, the years that there were publications belonging to that category:
+```
+
+
+
+
+
+
+
+```
+
+Now modify your previous query to print 'N/A' instead of null in the lists of years.(Hint: Use the ifNull operator when you add the year field).
+Also, sort the array of years in the final results (Hint: Use the sortArray operator).
 ```
 
 
