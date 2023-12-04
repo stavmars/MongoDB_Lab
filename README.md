@@ -337,3 +337,14 @@ Also, sort the array of years in the final results (Hint: Use the sortArray oper
 
 
 ```
+
+Find the authors who have written books in the most categories. Provide a list of these authors along with the number of categories they've written books in.
+```
+
+
+
+
+
+
+
+```
