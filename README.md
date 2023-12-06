@@ -152,9 +152,9 @@ Find the top 5 Python books with the most pages and print their titles, categori
 
 ```
 
-
-
-
+db.books.find({categories: "Python"}, {
+    title: 1, categories: 1, pageCount: 1
+}).sort({pageCount: -1}).limit(5)
 
 ```
 
@@ -163,9 +163,9 @@ Find the books that have as author either "Marc Harter" or "Alex Holmes" and pri
 
 ```
 
-
-
-
+db.books.find({authors: {$in: ["Marc Harter", "Alex Holmes"]}}, {
+    title: 1, categories: 1, authors: 1
+})
 
 ```
 
@@ -213,11 +213,14 @@ db.books.aggregate( [
 Expand the example above in order to also compute the minimum and maximum number of pages
 ```
 
-
-
-
-
-
+db.books.aggregate([{
+    $group: {
+        _id: "$status",
+        avgPageCount: {$avg: "$pageCount"},
+        minPageCount: {$min: "$pageCount"},
+        maxPageCount: {$max: "$pageCount"}
+    }
+}])
 
 ```
 
@@ -252,11 +255,11 @@ Now expand the query above to find the number of books per year and status.
 <br />&nbsp;&nbsp;&nbsp;&nbsp;**Hint:** Use as the _id field in the **$group** stage an object with keys both the year and status: __id:{year:"$year", status:"$status"}_
 ```
 
-
-
-
-
-
+db.books.aggregate([{$addFields: {year: {$year: "$publishedDate"}}}, {
+    $group: {
+        _id: {year: "$year", status: "$status"}, count: {$sum: 1}
+    }
+}, {$sort: {count: -1}}])
 
 ```
 
@@ -275,11 +278,11 @@ Similarly, find the average number of pages, as well as the number of books per 
 Then, find the 5 authors with the most books. Remember that as with the categories field, the authors field is also an array, so use the **$unwind** aggregation stage.
 ```
 
-
-
-
-
-
+db.books.aggregate([{$unwind: "$authors"}, {$match: {authors: {$ne: ""}}}, {
+    $group: {
+        _id: "$authors", count: {$sum: 1}, avgPageCount: {$avg: "$pageCount"}
+    }
+}, {$sort: {count: -1}}, {$limit: 5}])
 
 ```
 
@@ -297,11 +300,11 @@ db.books.aggregate([{$project: {authorsCount: {$size: '$authors'}}}, {
 In the same fashion, find the average number of categories for every book.
 ```
 
-
-
-
-
-
+db.books.aggregate([{$project: {categoriesCount: {$size: '$categories'}}}, {
+    $group: {
+        _id: null, avgCategoriesCount: {$avg: '$categoriesCount'}
+    }
+}])
 
 ```
 
@@ -318,11 +321,11 @@ db.books.aggregate([
 Now, find for every category of book, the years that there were publications belonging to that category:
 ```
 
-
-
-
-
-
+db.books.aggregate([{$addFields: {year: {$year: "$publishedDate"}}}, {$unwind: "$categories"}, {
+    $group: {
+        _id: "$categories", years: {$addToSet: "$year"}
+    }
+}])
 
 ```
 
@@ -330,21 +333,53 @@ Now modify your previous query to print 'N/A' instead of null in the lists of ye
 Also, sort the array of years in the final results (Hint: Use the sortArray operator).
 ```
 
-
-
-
-
-
+db.books.aggregate([{$addFields: {year: {$ifNull: [{$year: "$publishedDate"}, "N/A"]}}}, {$unwind: "$categories"}, {
+    $group: {
+        _id: "$categories", years: {$addToSet: "$year"}
+    }
+}, {$project: {years: {$sortArray: {input: "$years", sortBy: 1}}}}])
 
 ```
 
 Find the authors who have written books in the most categories. Provide a list of these authors along with the number of categories they've written books in.
 ```
 
-
-
-
-
-
+db.books.aggregate([
+  {
+    $unwind: "$authors"
+  },
+  {
+    $unwind: "$categories"
+  },
+  {
+    $group: {
+      _id: {
+        author: "$authors",
+        category: "$categories"
+      }
+    }
+  },
+  {
+    $group: {
+      _id: "$_id.author",
+      categoriesCount: { $sum: 1 }
+    }
+  },
+  {
+    $sort: {
+      categoriesCount: -1
+    }
+  },
+  {
+    $limit: 5
+  },
+  {
+    $project: {
+      author: "$_id",
+      categoriesCount: 1,
+      _id: 0
+    }
+  }
+])
 
 ```
