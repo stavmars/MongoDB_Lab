@@ -1,7 +1,30 @@
 # MongoDB Lab - Hands-on
 
-__Prerequisites:__
-You need to have Docker preinstalled. You can install it from [here](https://docs.docker.com/get-docker/).
+## Prerequisites
+Install the **MongoDB Community Server**:
+
+👉 https://www.mongodb.com/try/download/community
+
+During installation, enable the option to install **MongoDB Compass**.  
+If Compass is not included, install it separately:
+
+👉 https://www.mongodb.com/products/tools/compass
+
+## Starting MongoDB
+
+After installation:
+
+- **Windows**: MongoDB starts automatically as a service.
+- **macOS (Homebrew install)**:
+  ```bash
+  brew services start mongodb-community
+  ```
+- **Linux**:
+  ```bash
+  sudo systemctl start mongod
+  ```
+
+<!-- You need to have Docker preinstalled. You can install it from [here](https://docs.docker.com/get-docker/).
 
 
 ## Run MongoDB as a Docker Container
@@ -19,9 +42,20 @@ The connect to our container named MONGO_CONTAINER using the bash terminal run:
 To launch the MongoDB shell and connect to the MongoDB instance running on localhost with the default port 27017:
  ```
    mongosh
- ```
+ ``` -->
 
-## Interact with the MongoDB shell
+## Connect to MongoDB using Compass
+
+1. Open **MongoDB Compass**.
+2. In the connection dialog, use the default connection string:
+3. Click **Connect** to access your local MongoDB instance.
+
+## Interact with MongoDB Using the Built-in Compass Shell
+
+MongoDB Compass allows most interactions with the database to be performed through its graphical interface (creating databases, collections, inserting documents, running queries, etc.). However, it also includes a built-in **Mongo Shell**, which we will mostly use during the lab to practice the basic MongoDB commands and become familiar with MongoDB’s query language — the same query syntax you would also use inside application code.
+
+Open it from the **Shell** tab at the top of the Compass window.
+
 To list the databases, execute the following command:
 ```
 show dbs
@@ -76,27 +110,34 @@ Remove all matching documents:
  db.items.remove({ qty: { $lte: 10 } })
 ```
 
+## Load the Sample Books Dataset
 
-## Load the sample Books dataset
+### Importing the dataset using MongoDB Compass (recommended)
 
-First, exit the mongo shell:
-```
-exit
-```
+1. Download the sample JSON file from the following link:  
+   https://raw.githubusercontent.com/stavmars/MongoDB_Lab/main/books.json
 
-Then, in the bash shell run the following to update the container libraries and install wget. 
-This is needed in order to later fetch the sample json file from the web.
+2. Open **MongoDB Compass** and connect to `mongodb://localhost:27017`
 
-```
-apt-get update && apt-get install wget
-```
+3. In the left sidebar, create (or select) the database **lab**.
 
-Fetch the sample json and import it into a collection "books" of database "lab" using **mongoimport**:
-```
-wget -qO- https://raw.githubusercontent.com/stavmars/MongoDB_Lab/main/books.json | mongoimport -d lab -c books --drop
-```
+4. Create a new collection named **books**.
+
+5. Inside the `books` collection, click **ADD DATA → Import JSON**.
+
+6. Select the downloaded `books.json` file and click **Import**.
+
+You should now see all the book documents loaded into the collection.
 
 
+> 
+> ### Optional: Importing the dataset using `mongoimport`
+> If you prefer using the terminal, you can import the dataset with:
+> ```bash
+> mongoimport --db lab --collection books --drop --file /path/to/books.json
+> ```
+> Replace `/path/to/books.json` with the actual file path.
+>
 
 ## Explore the Books Dataset
 
@@ -152,9 +193,9 @@ Find the top 5 Python books with the most pages and print their titles, categori
 
 ```
 
-db.books.find({categories: "Python"}, {
-    title: 1, categories: 1, pageCount: 1
-}).sort({pageCount: -1}).limit(5)
+
+
+
 
 ```
 
@@ -163,9 +204,9 @@ Find the books that have as author either "Marc Harter" or "Alex Holmes" and pri
 
 ```
 
-db.books.find({authors: {$in: ["Marc Harter", "Alex Holmes"]}}, {
-    title: 1, categories: 1, authors: 1
-})
+
+
+
 
 ```
 
@@ -213,14 +254,11 @@ db.books.aggregate( [
 Expand the example above in order to also compute the minimum and maximum number of pages
 ```
 
-db.books.aggregate([{
-    $group: {
-        _id: "$status",
-        avgPageCount: {$avg: "$pageCount"},
-        minPageCount: {$min: "$pageCount"},
-        maxPageCount: {$max: "$pageCount"}
-    }
-}])
+
+
+
+
+
 
 ```
 
@@ -255,11 +293,11 @@ Now expand the query above to find the number of books per year and status.
 <br />&nbsp;&nbsp;&nbsp;&nbsp;**Hint:** Use as the _id field in the **$group** stage an object with keys both the year and status: __id:{year:"$year", status:"$status"}_
 ```
 
-db.books.aggregate([{$addFields: {year: {$year: "$publishedDate"}}}, {
-    $group: {
-        _id: {year: "$year", status: "$status"}, count: {$sum: 1}
-    }
-}, {$sort: {count: -1}}])
+
+
+
+
+
 
 ```
 
@@ -278,11 +316,11 @@ Similarly, find the average number of pages, as well as the number of books per 
 Then, find the 5 authors with the most books. Remember that as with the categories field, the authors field is also an array, so use the **$unwind** aggregation stage.
 ```
 
-db.books.aggregate([{$unwind: "$authors"}, {$match: {authors: {$ne: ""}}}, {
-    $group: {
-        _id: "$authors", count: {$sum: 1}, avgPageCount: {$avg: "$pageCount"}
-    }
-}, {$sort: {count: -1}}, {$limit: 5}])
+
+
+
+
+
 
 ```
 
@@ -300,11 +338,11 @@ db.books.aggregate([{$project: {authorsCount: {$size: '$authors'}}}, {
 In the same fashion, find the average number of categories for every book.
 ```
 
-db.books.aggregate([{$project: {categoriesCount: {$size: '$categories'}}}, {
-    $group: {
-        _id: null, avgCategoriesCount: {$avg: '$categoriesCount'}
-    }
-}])
+
+
+
+
+
 
 ```
 
@@ -321,11 +359,11 @@ db.books.aggregate([
 Now, find for every category of book, the years that there were publications belonging to that category:
 ```
 
-db.books.aggregate([{$addFields: {year: {$year: "$publishedDate"}}}, {$unwind: "$categories"}, {
-    $group: {
-        _id: "$categories", years: {$addToSet: "$year"}
-    }
-}])
+
+
+
+
+
 
 ```
 
@@ -333,53 +371,21 @@ Now modify your previous query to print 'N/A' instead of null in the lists of ye
 Also, sort the array of years in the final results (Hint: Use the sortArray operator).
 ```
 
-db.books.aggregate([{$addFields: {year: {$ifNull: [{$year: "$publishedDate"}, "N/A"]}}}, {$unwind: "$categories"}, {
-    $group: {
-        _id: "$categories", years: {$addToSet: "$year"}
-    }
-}, {$project: {years: {$sortArray: {input: "$years", sortBy: 1}}}}])
+
+
+
+
+
 
 ```
 
 Find the authors who have written books in the most categories. Provide a list of these authors along with the number of categories they've written books in.
 ```
 
-db.books.aggregate([
-  {
-    $unwind: "$authors"
-  },
-  {
-    $unwind: "$categories"
-  },
-  {
-    $group: {
-      _id: {
-        author: "$authors",
-        category: "$categories"
-      }
-    }
-  },
-  {
-    $group: {
-      _id: "$_id.author",
-      categoriesCount: { $sum: 1 }
-    }
-  },
-  {
-    $sort: {
-      categoriesCount: -1
-    }
-  },
-  {
-    $limit: 5
-  },
-  {
-    $project: {
-      author: "$_id",
-      categoriesCount: 1,
-      _id: 0
-    }
-  }
-])
+
+
+
+
+
 
 ```
