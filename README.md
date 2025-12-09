@@ -141,11 +141,6 @@ You should now see all the book documents loaded into the collection.
 
 ## Explore the Books Dataset
 
-Launch the MongoDB shell again:
- ```
-   mongosh
- ```
-
 Switch to the new database and view the available collections
 ```
 use lab
