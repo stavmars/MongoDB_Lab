@@ -115,7 +115,7 @@ Remove all matching documents:
 ### Importing the dataset using MongoDB Compass (recommended)
 
 1. Download the sample JSON file from the following link:  
-   https://raw.githubusercontent.com/stavmars/MongoDB_Lab/main/books.json
+   [https://raw.githubusercontent.com/stavmars/MongoDB_Lab/main/books.json](https://raw.githubusercontent.com/stavmars/MongoDB_Lab/main/books.json)
 
 2. Open **MongoDB Compass** and connect to `mongodb://localhost:27017`
 
